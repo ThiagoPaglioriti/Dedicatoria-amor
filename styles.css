@@ -80,3 +80,242 @@ body.page-lock::before{
 /* Asegurar que el contenido quede por encima del fondo */
 .page-love > *,
 .page-lock > *{position:relative; z-index:1}
+
+/* Mensaje que aparece en la posición del click (compartido entre páginas) */
+.click-message{
+	position:fixed;
+	top: auto;
+	left: 50%;
+	transform: translateX(-50%) translateY(10px);
+	background: rgba(0,0,0,0.85);
+	color: #fff;
+	padding: 10px 14px;
+	border-radius: 8px;
+	font-size: 1rem;
+	z-index: 1200;
+	opacity: 0;
+	transition: opacity .18s ease, transform .18s ease, left .08s linear, top .08s linear;
+	pointer-events: none;
+}
+.click-message.visible{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+
+/* ------------------------------- */
+/* SOBRE y CARTA (estilos añadidos) */
+/* ------------------------------- */
+/* Estilos para el sobre, sello y carta que se muestran en la sección "Carta de Mi Corazón".
+	 Estos estilos se añadieron desde un snippet externo y están comentados para facilitar
+	 su comprensión y personalización. */
+
+/* Contenedor del SOBRE (estético, inline-block) */
+
+/* SOBRE: estilo inspirado en la imagen adjunta. */
+.sobre{
+	position: relative;
+	display: inline-block;
+	width: 260px;
+	height: 160px;
+	background: #fff7ec; /* interior crema similar a la imagen */
+	border: 4px solid #6d0f2a; /* borde vino oscuro */
+	border-radius: 14px;
+	box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+	overflow: hidden;
+}
+
+/* Dibujamos las líneas diagonales del sobre (las solapas) usando pseudo-elementos.
+	 Esto crea el efecto de "X" y la línea superior que aparece en la imagen. */
+.sobre::before,
+.sobre::after{
+	content: '';
+	position: absolute;
+	left: 0; top: 0; right: 0; bottom: 0;
+	pointer-events: none;
+}
+.sobre::before{
+	/* línea diagonal de izquierda-abajo a derecha-arriba */
+	background: linear-gradient(135deg, transparent 42%, rgba(109,15,42,0.08) 42%, rgba(109,15,42,0.08) 43%, transparent 43%);
+}
+.sobre::after{
+	/* línea diagonal opuesta */
+	background: linear-gradient(225deg, transparent 42%, rgba(109,15,42,0.08) 42%, rgba(109,15,42,0.08) 43%, transparent 43%);
+}
+
+/* SELLO centrado con forma circular y corazón en su interior. */
+.sello{
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 64px;
+	height: 64px;
+	background: #6d0f2a; /* color del sello (vino) */
+	border-radius: 50%;
+	cursor: pointer;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 26px;
+	box-shadow: 0 6px 12px rgba(0,0,0,0.22);
+	z-index: 2;
+}
+
+/* Pequeño efecto hover para el sello */
+.sello:hover{ transform: translate(-50%, -50%) scale(1.04); }
+
+/* CARTA: panel que aparece al abrir el sobre. Oculta inicialmente. */
+.carta{
+	display: none; /* visible al abrir */
+	position: relative;
+	background-color: #fffaf0;
+	width: 300px;
+	height: auto;
+	margin: 12px auto 0 auto;
+	border: 2px solid #c9a87c;
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+	animation: aparecer 0.4s ease forwards;
+}
+
+/* Animación de aparición de la carta */
+@keyframes aparecer{
+	from {opacity: 0; transform: scale(0.8);} 
+	to {opacity: 1; transform: scale(1);} 
+}
+
+/* BOTÓN DE CIERRE dentro de la carta */
+.cerrar{
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	cursor: pointer;
+	background: none;
+	border: none;
+	font-size: 20px;
+	color: #a33;
+}
+.cerrar:hover{ color: #d11 }
+
+/* Pequeña adaptación responsive si hace falta */
+@media (max-width:420px){
+	.sobre{ width: 200px; height: 150px }
+	.carta{ width: calc(100% - 40px) }
+}
+
+/* ------------------------------- */
+/* CENTRAR SOBRE Y CARTA EN PANTALLA */
+/* ------------------------------- */
+.letter-section{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	min-height: 360px; /* espacio vertical para centrar visualmente */
+	flex-direction:column;
+}
+
+/* Solapa superior (flap) que se animará al abrir el sobre.
+	 Usamos un elemento .flap posicionado encima del sobre. */
+.flap{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 48%;
+	background: linear-gradient(180deg, rgba(109,15,42,0.06), rgba(109,15,42,0.03));
+	border-bottom: 2px solid rgba(109,15,42,0.08);
+	transform-origin: top center;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	z-index:1;
+	transition: transform 450ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Estado abrir: rotamos la solapa para simular apertura */
+.sobre.opening .flap{
+	transform: rotateX(75deg) translateY(-12%);
+	box-shadow: 0 18px 30px rgba(0,0,0,0.18);
+}
+
+/* Ajustes tipográficos para la carta: cursiva, negrita y tamaño mayor */
+.carta .letter-text{
+	font-style: italic;
+	font-weight: 700;
+	font-size: 1.05rem; /* un poco más grande */
+	line-height: 1.45;
+	color: #5b2430;
+}
+
+/* Animación sutil al mostrar la carta */
+.carta{ transform-origin: center top }
+
+/* Decoración tipo carta: titulo, corazones en las esquinas y arte en la esquina inferior derecha */
+.carta{
+	position: relative; /* necesario para posicionar decoraciones */
+	background: #fff7ec;
+	border: 6px solid #f5cfcf;
+	padding: 28px 36px 64px 36px; /* más espacio horizontal */
+	width: 880px; /* mucho más ancha para alargarse a ambos lados */
+	min-height: 480px; /* ajustar altura para mantener proporción */
+	max-width: calc(100% - 48px);
+	margin: 0 auto; /* asegurar centrado */
+}
+
+.carta .letter-title{
+	font-family: 'Brush Script MT', 'Segoe Script', cursive;
+	font-size: 1.5rem;
+	margin: 0 0 10px 0;
+	color: #6b2430;
+}
+
+/* corazones decorativos en las 4 esquinas */
+.carta .decor-icons .heart{
+	position: absolute;
+	color: #e65a63;
+	font-size: 18px;
+	opacity: 0.95;
+}
+.carta .decor-icons .heart.tl{ top: 6px; left: 6px }
+.carta .decor-icons .heart.tr{ top: 6px; right: 6px }
+.carta .decor-icons .heart.bl{ bottom: 22px; left: 8px }
+.carta .decor-icons .heart.br{ bottom: 22px; right: 8px }
+
+/* Arte (corazón + flor) en la esquina inferior derecha, colocado más abajo para no interferir con el texto */
+.carta .art{
+	position: absolute;
+	right: 10px;
+	bottom: 6px; /* más abajo; el padding inferior de la carta deja espacio */
+	font-size: 28px;
+	color: #e65a63;
+	opacity: 0.98;
+	display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.carta .art .rose{ font-size:22px; color:#b23a48 }
+
+/* Ensures text doesn't overlap the art by adding padding-right on content if needed */
+.carta .letter-content{ padding-right: 48px }
+
+/* Borde punteado interior: creado con pseudo-elemento para parecer líneas punteadas alrededor del papel */
+.carta::before{
+	content: '';
+	position: absolute;
+	inset: 12px; /* deja margen desde el borde exterior */
+	border-radius: 8px;
+	pointer-events: none;
+	/* usamos background SVG inline para dibujar puntos uniformes con control de tamaño */
+	background-image: radial-gradient(circle, rgba(109,15,42,0.9) 1px, transparent 1px);
+	background-size: 10px 10px;
+	mask-image: linear-gradient(#000 0 0);
+	opacity: 0.12;
+}
+
+/* Para dar efecto de borde punteado en los lados, ocultamos los puntos cerca del interior para dejar una línea punteada visible
+	 usando otro pseudo-elemento con linear-gradient en combinación (simplifica el borde). */
+.carta::after{
+	content: '';
+	position: absolute;
+	left: 22px; right: 22px; top: 22px; bottom: 22px;
+	border-radius: 6px;
+	pointer-events: none;
+	border: 2px dashed rgba(230,90,99,0.45);
+}

@@ -4,8 +4,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dedicatoria</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+.click-message{
+	position:fixed;
+	/* top/left se ajustan dinámicamente desde JS */
+	top: auto;
+	left: 50%;
+	transform: translateX(-50%) translateY(10px);
+	background: rgba(0,0,0,0.85);
+	color: #fff;
+	padding: 10px 14px;
+	border-radius: 8px;
+	font-size: 1rem;
+	z-index: 1200;
+	opacity: 0;
+	transition: opacity .18s ease, transform .18s ease, left .08s linear, top .08s linear;
+	pointer-events: none;
+}
+.click-message.visible{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+</style>
 </head>
-<body class="page page-love">
+<body class="page page-love" onclick="mostrarTexto(event)" role="application" tabindex="0">
 <header class="love-header">
 <h1>Desde aquel día...</h1>
 </header>
@@ -46,19 +65,44 @@
 </section>
 
 <section class="letter-section center">
-<h2>Carta de Mi Corazón</h2>
-<div class="envelope" id="envelope">
-<div class="heart-seal">❤</div>
-</div>
+	<h2>Carta de Mi Corazón</h2>
 
-<p class="back-link center"><a href="candado.html">Volver</a></p>
+	<!-- SOBRE: cuando se hace click en el sello se abre la carta -->
+	<div id="sobre" class="sobre">
+		<!-- Solapa superior (flap) que se animará al abrir -->
+		<div class="flap" aria-hidden="true"></div>
+		<!-- Sello centrado con forma de corazón; role/button y tabindex para accesibilidad -->
+		<div class="sello" onclick="abrirCarta()" role="button" aria-label="Abrir carta" tabindex="0">❤</div>
+	</div>
 
-<div class="modal" id="modal">
-<div class="modal-content">
-<button class="close" id="closeModal">✕</button>
-<p class="letter-text">Mi amor, desde el primer día que te vi, supe que ibas a ser mi princesa. Cada risa, cada lágrima, cada abrazo con vos fue un tesoro que guardo en mi corazón. Sos mi sol en días grises, mi refugio en las tormentas y mi alegría en cada momento. No hay palabras suficientes para expresar cuánto te amo, pero prometo pasar cada día demostrándotelo con hechos, con cariño, con todo lo que soy. Gracias por ser mi todo, hoy y siempre.</p>
-</div>
-</div>
+	<p class="back-link center"><a href="candado.html">Volver</a></p>
+
+	<!-- CARTA: panel que aparece al abrir el sobre. Contiene el mismo texto que la carta original. -->
+	<div id="carta" class="carta" aria-hidden="true">
+		<!-- Botón de cierre con explicación en comentario -->
+		<button class="cerrar" onclick="cerrarCarta()" aria-label="Cerrar carta">✖</button>
+		<!-- decoraciones (corazones en las esquinas) -->
+		<div class="decor-icons" aria-hidden="true">
+			<span class="heart tl">❤</span>
+			<span class="heart tr">❤</span>
+			<span class="heart bl">❤</span>
+			<span class="heart br">❤</span>
+		</div>
+
+		<!-- título personalizado -->
+		<h3 class="letter-title">Mi Amor:</h3>
+
+		<div class="letter-content">
+			<p class="letter-text">Mi amor, desde el primer día que te vi, supe que ibas a ser mi princesa. Cada risa, cada lágrima, cada abrazo con vos fue un tesoro que guardo en mi corazón. Sos mi sol en días grises, mi refugio en las tormentas y mi alegría en cada momento. No hay palabras suficientes para expresar cuánto te amo, pero prometo pasar cada día demostrándotelo con hechos, con cariño, con todo lo que soy. Gracias por ser mi todo, hoy y siempre.</p>
+		</div>
+
+		<!-- arte en la esquina inferior derecha: corazón + rosa -->
+		<div class="art" aria-hidden="true">
+			<div class="rose">🌹</div>
+			<div class="big-heart">❤</div>
+		</div>
+	</div>
+
 </section>
 
 <script>
@@ -123,17 +167,164 @@ sEl.textContent = ss;
 }
 setInterval(updateCountdown, 250);
 updateCountdown();
-// ---- Envelope modal ----
-const envelope = document.getElementById('envelope');
-const modal = document.getElementById('modal');
-const closeModal = document.getElementById('closeModal');
+</script>
 
+<!-- Listener de teclado para el sello: abre carta con Enter o Space -->
+<script>
+	(function(){
+		const sello = document.querySelector('.sello');
+		if(!sello) return;
+		sello.addEventListener('keydown', (e)=>{
+			if(e.code === 'Enter' || e.code === 'Space' || e.key === ' '){
+				e.preventDefault();
+				abrirCarta();
+			}
+		});
+	})();
+</script>
 
-envelope.addEventListener('click', ()=>{
-modal.classList.add('open');
-});
-closeModal.addEventListener('click', ()=> modal.classList.remove('open'));
-modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('open'); });
+<!-- Script para controlar el sobre y la carta (abre/cierra) -->
+<script>
+	/**
+	 * abrirCarta()
+	 * - Oculta el sobre y muestra la carta.
+	 * - Ajusta aria-hidden para que lectores de pantalla sepan el estado.
+	 */
+	function abrirCarta(){
+		const sobre = document.getElementById('sobre');
+		const carta = document.getElementById('carta');
+		if(!sobre || !carta) return;
+			// Añadir clase que activa la animación de la solapa
+			sobre.classList.add('opening');
+			// Esperar a la animación (un poco más que la transición CSS de 450ms) antes de mostrar la carta
+			setTimeout(()=>{
+				sobre.style.display = 'none';
+				carta.style.display = 'block';
+				carta.setAttribute('aria-hidden','false');
+				// limpiar la clase para permitir re-animaciones futuras
+				sobre.classList.remove('opening');
+			}, 520);
+	}
+
+	/**
+	 * cerrarCarta()
+	 * - Oculta la carta y vuelve a mostrar el sobre.
+	 */
+	function cerrarCarta(){
+		const sobre = document.getElementById('sobre');
+		const carta = document.getElementById('carta');
+		if(!sobre || !carta) return;
+			// Ocultamos la carta y devolvemos el sobre. Podemos añadir una pequeña animación inversa si queremos.
+			carta.style.display = 'none';
+			carta.setAttribute('aria-hidden','true');
+			sobre.style.display = 'inline-block';
+	}
+</script>
+<!-- Mensaje al hacer click en la página -->
+<p id="mensaje" class="click-message" role="status" aria-live="polite" aria-atomic="true">¡Hiciste clic en la página! 👏</p>
+<script>
+	(function(){
+		const msg = document.getElementById('mensaje');
+		let hideTimeout = null;
+
+				// list of affectionate messages (se pueden personalizar vía data-messages)
+				const defaultMessages = [
+					'Siempre serás mi reina 👑',
+					'Eres mi todo 💖',
+					'Contigo, todo tiene sentido ✨',
+					'Te amo hoy y siempre 💘',
+                    'Eres mi razón de sonreír 😊',
+                    'Cada día contigo es un regalo 🎁',
+                    '¿Para cuándo unos clashitos? xd',
+				];
+
+				// show message and auto-hide — accepts an Event (mouse/touch) or no arg (keyboard)
+				window.mostrarTexto = function(ev){
+				if(!msg) return;
+
+				// if invoked from a click, avoid showing when clicking interactive elements
+				if(ev && ev.target && ev.target.closest && ev.target.closest('a, button, input, textarea, select, label')) return;
+
+				// determine coordinates: mouse/touch -> clientX/clientY; keyboard -> center
+				let x = window.innerWidth / 2;
+				let y = window.innerHeight / 2;
+				if(ev && typeof ev.clientX === 'number'){
+					x = ev.clientX;
+					y = ev.clientY;
+				} else if(ev && ev.touches && ev.touches[0]){
+					x = ev.touches[0].clientX;
+					y = ev.touches[0].clientY;
+				}
+
+						// set message text: prefer data-messages attribute (JSON/CSV) otherwise random default
+						let messages = defaultMessages;
+						try{
+							const attr = msg.getAttribute('data-messages');
+							if(attr){
+								// try JSON array first
+								if(attr.trim().startsWith('[')) messages = JSON.parse(attr);
+								else messages = attr.split('|').map(s=>s.trim()).filter(Boolean);
+							}
+						}catch(e){ /* ignore parse errors and fallback */ }
+						const chosen = messages[Math.floor(Math.random()*messages.length)];
+						msg.textContent = chosen;
+
+						// prepare message for measurement
+				msg.classList.remove('visible');
+				msg.style.left = '0px';
+				msg.style.top = '0px';
+
+				// Small delay to ensure offsets are correct (usually not needed but safe)
+				const place = ()=>{
+					const mw = msg.offsetWidth || 120;
+					const mh = msg.offsetHeight || 32;
+
+					// We position the message above the click (so pointer isn't obscured)
+					const padding = 8; // viewport padding
+
+					// left is the horizontal center point (we use translateX(-50%) in CSS)
+					const minCenterX = padding + mw / 2;
+					const maxCenterX = window.innerWidth - padding - mw / 2;
+					const centerX = Math.max(minCenterX, Math.min(maxCenterX, x));
+
+					// desired top (above cursor)
+					let desiredTop = y - mh - 12; // 12px gap above cursor
+					// if not enough space above, place below the cursor
+					if(desiredTop < padding) desiredTop = y + 12;
+					// clamp vertically
+					const maxTop = window.innerHeight - mh - padding;
+					desiredTop = Math.max(padding, Math.min(maxTop, desiredTop));
+
+					msg.style.left = centerX + 'px';
+					msg.style.top = desiredTop + 'px';
+
+					// show and auto-hide
+					msg.classList.add('visible');
+					clearTimeout(hideTimeout);
+					hideTimeout = setTimeout(()=> msg.classList.remove('visible'), 2500);
+				};
+
+				// If element wasn't rendered/measured yet, use requestAnimationFrame
+				if(msg.offsetWidth === 0){
+					requestAnimationFrame(place);
+				} else {
+					place();
+				}
+			};
+
+			// support keyboard activation: Enter or Space on the document body
+			window.addEventListener('keydown', (e)=>{
+				if(e.code === 'Enter' || e.code === 'Space' || e.key === ' '){
+					const active = document.activeElement;
+					if(active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+					// call mostrarTexto without event: it will place the message at center
+					mostrarTexto();
+				}
+			});
+
+			// also close on click of the message (optional) so keyboard users can dismiss
+			msg.addEventListener('click', ()=>{ msg.classList.remove('visible'); clearTimeout(hideTimeout); });
+	})();
 </script>
 </body>
 </html>

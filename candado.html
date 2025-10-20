@@ -5,7 +5,7 @@
  <title>Sorpresa</title>
  <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="page page-lock">
+  <body class="page page-lock" onclick="mostrarTexto(event)">
       <main class="center">
           <h1 class="title">Ingresa la fecha correcta...</h1>
 
@@ -111,6 +111,64 @@
         });
       }
       })();
+      </script>
+      <!-- Mensaje al hacer click en la página (compartido con love.html) -->
+      <p id="mensaje" class="click-message" role="status" aria-live="polite" aria-atomic="true">¡Hiciste clic en la página! 👏</p>
+      <script>
+        (function(){
+          const msg = document.getElementById('mensaje');
+          let hideTimeout = null;
+
+          const defaultMessages = [
+            'Siempre serás mi reina 👑',
+            'Eres mi todo 💖',
+            'Contigo, todo tiene sentido ✨',
+            'Te amo hoy y siempre 💘',
+            'Eres mi razón de sonreír 😊',
+            '¿Para cuándo unos clashitos? xd',
+          ];
+
+          window.mostrarTexto = function(ev){
+            if(!msg) return;
+            if(ev && ev.target && ev.target.closest && ev.target.closest('a, button, input, textarea, select, label')) return;
+
+            let x = window.innerWidth / 2;
+            let y = window.innerHeight / 2;
+            if(ev && typeof ev.clientX === 'number'){
+              x = ev.clientX; y = ev.clientY;
+            } else if(ev && ev.touches && ev.touches[0]){
+              x = ev.touches[0].clientX; y = ev.touches[0].clientY;
+            }
+
+            let messages = defaultMessages;
+            try{
+              const attr = msg.getAttribute('data-messages');
+              if(attr){
+                if(attr.trim().startsWith('[')) messages = JSON.parse(attr);
+                else messages = attr.split('|').map(s=>s.trim()).filter(Boolean);
+              }
+            }catch(e){}
+            msg.textContent = messages[Math.floor(Math.random()*messages.length)];
+
+            msg.classList.remove('visible');
+            msg.style.left = '0px'; msg.style.top = '0px';
+
+            const place = ()=>{
+              const mw = msg.offsetWidth || 120; const mh = msg.offsetHeight || 32; const padding = 8;
+              const minCenterX = padding + mw/2; const maxCenterX = window.innerWidth - padding - mw/2;
+              const centerX = Math.max(minCenterX, Math.min(maxCenterX, x));
+              let desiredTop = y - mh - 12; if(desiredTop < padding) desiredTop = y + 12;
+              const maxTop = window.innerHeight - mh - padding; desiredTop = Math.max(padding, Math.min(maxTop, desiredTop));
+              msg.style.left = centerX + 'px'; msg.style.top = desiredTop + 'px';
+              msg.classList.add('visible'); clearTimeout(hideTimeout); hideTimeout = setTimeout(()=> msg.classList.remove('visible'), 2500);
+            };
+
+            if(msg.offsetWidth === 0) requestAnimationFrame(place); else place();
+          };
+
+          window.addEventListener('keydown', (e)=>{ if(e.code==='Enter'||e.code==='Space'||e.key===' '){ const active=document.activeElement; if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA'||active.isContentEditable)) return; mostrarTexto(); }});
+          msg.addEventListener('click', ()=>{ msg.classList.remove('visible'); clearTimeout(hideTimeout); });
+        })();
       </script>
   </body>
 </html>
