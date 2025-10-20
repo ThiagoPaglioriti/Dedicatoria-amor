@@ -1,0 +1,139 @@
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dedicatoria</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="page page-love">
+<header class="love-header">
+<h1>Desde aquel día...</h1>
+</header>
+
+<section class="gallery-section center">
+<h2>Nuestros Recuerdos</h2>
+<div class="carousel" id="carousel">
+<!-- imágenes de ejemplo (puedes reemplazarlas por las tuyas) -->
+<img src="https://picsum.photos/seed/1/400/600" alt="foto1"/>
+<img src="https://picsum.photos/seed/2/400/600" alt="foto2"/>
+<img src="https://picsum.photos/seed/3/400/600" alt="foto3"/>
+<img src="https://picsum.photos/seed/4/400/600" alt="foto4"/>
+<img src="https://picsum.photos/seed/5/400/600" alt="foto5"/>
+</div>
+<small class="drag-hint">Mantén el click y arrastra para mover las fotos</small>
+</section>
+
+<section class="time-section center">
+<h2>Nuestro Tiempo Juntos</h2>
+<div class="avatar-and-counter">
+<div class="avatar">
+<img src="https://picsum.photos/seed/couple/300/300" alt="pareja"/>
+</div>
+
+<div class="counter-card" id="counterCard">
+<div class="row">
+<div class="cell"><div class="num" id="years">0</div><div class="label">AÑOS</div></div>
+<div class="cell"><div class="num" id="months">3</div><div class="label">MESES</div></div>
+<div class="cell"><div class="num" id="days">106</div><div class="label">DÍAS</div></div>
+</div>
+<div class="row">
+<div class="cell"><div class="num" id="hours">21</div><div class="label">HORAS</div></div>
+<div class="cell"><div class="num" id="minutes">12</div><div class="label">MINUTOS</div></div>
+<div class="cell"><div class="num" id="seconds">47</div><div class="label">SEGUNDOS</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="letter-section center">
+<h2>Carta de Mi Corazón</h2>
+<div class="envelope" id="envelope">
+<div class="heart-seal">❤</div>
+</div>
+
+<p class="back-link center"><a href="candado.html">Volver</a></p>
+
+<div class="modal" id="modal">
+<div class="modal-content">
+<button class="close" id="closeModal">✕</button>
+<p class="letter-text">Mi amor, desde el primer día que te vi, supe que ibas a ser mi princesa. Cada risa, cada lágrima, cada abrazo con vos fue un tesoro que guardo en mi corazón. Sos mi sol en días grises, mi refugio en las tormentas y mi alegría en cada momento. No hay palabras suficientes para expresar cuánto te amo, pero prometo pasar cada día demostrándotelo con hechos, con cariño, con todo lo que soy. Gracias por ser mi todo, hoy y siempre.</p>
+</div>
+</div>
+</section>
+
+<script>
+// ---- Carousel: drag to scroll ----
+const carousel = document.getElementById('carousel');
+let isDown = false, startX, scrollLeft;
+carousel.addEventListener('mousedown', (e)=>{
+isDown = true; carousel.classList.add('dragging'); startX = e.pageX - carousel.offsetLeft; scrollLeft = carousel.scrollLeft;
+});
+window.addEventListener('mouseup', ()=>{ isDown = false; carousel.classList.remove('dragging'); });
+carousel.addEventListener('mouseleave', ()=>{ isDown = false; carousel.classList.remove('dragging'); });
+carousel.addEventListener('mousemove', (e)=>{
+if(!isDown) return;
+e.preventDefault();
+const x = e.pageX - carousel.offsetLeft;
+const walk = (x - startX) * 1.5; //scroll-fast
+carousel.scrollLeft = scrollLeft - walk;
+});
+// ---- Countdown (desde 2025-06-30 20:42 local) ----
+const startDate = new Date(2025, 5, 30, 20, 42, 0); // mes 5 = junio (0-based)
+const yEl = document.getElementById('years');
+const moEl = document.getElementById('months');
+const dEl = document.getElementById('days');
+const hEl = document.getElementById('hours');
+const miEl = document.getElementById('minutes');
+const sEl = document.getElementById('seconds');
+
+
+function updateCountdown(){
+const now = new Date();}
+if(now < startDate){
+yEl.textContent=moEl.textContent=dEl.textContent=hEl.textContent=miEl.textContent=sEl.textContent='0';
+return;
+}
+// calc difference component-wise
+let ys = now.getFullYear() - startDate.getFullYear();
+let ms = now.getMonth() - startDate.getMonth();
+let ds = now.getDate() - startDate.getDate();
+let hs = now.getHours() - startDate.getHours();
+let mis = now.getMinutes() - startDate.getMinutes();
+let ss = now.getSeconds() - startDate.getSeconds();
+
+
+if(ss < 0){ ss += 60; mis -= 1; }
+if(mis < 0){ mis += 60; hs -= 1; }
+if(hs < 0){ hs += 24; ds -= 1; }
+if(ds < 0){
+// borrow days from previous month
+const prev = new Date(now.getFullYear(), now.getMonth(), 0); // last day of previous month
+ds += prev.getDate();
+ms -= 1;
+}
+if(ms < 0){ ms += 12; ys -= 1; }
+
+{
+yEl.textContent = ys;
+moEl.textContent = ms;
+dEl.textContent = ds;
+hEl.textContent = hs;
+miEl.textContent = mis;
+sEl.textContent = ss;
+}
+setInterval(updateCountdown, 250);
+updateCountdown();
+// ---- Envelope modal ----
+const envelope = document.getElementById('envelope');
+const modal = document.getElementById('modal');
+const closeModal = document.getElementById('closeModal');
+
+
+envelope.addEventListener('click', ()=>{
+modal.classList.add('open');
+});
+closeModal.addEventListener('click', ()=> modal.classList.remove('open'));
+modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('open'); });
+</script>
+</body>
+</html>

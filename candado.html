@@ -1,0 +1,116 @@
+<html lang="es">
+  <head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width,initial-scale=1" />
+ <title>Sorpresa</title>
+ <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="page page-lock">
+      <main class="center">
+          <h1 class="title">Ingresa la fecha correcta...</h1>
+
+          <div class="lock-card">
+          <!-- candado simple con SVG -->
+          <div class="lock-art">
+              <svg viewBox="0 0 200 200" class="heart-lock">
+                  <defs>
+                      <linearGradient id="g1" x1="0" x2="1">
+                          <stop offset="0" stop-color="#ffb3d1"/>
+                          <stop offset="1" stop-color="#ff6fa8"/>
+                      </linearGradient>
+                  </defs>
+                  <path d="M100 160 L40 100 A30 30 0 1 1 100 60 A30 30 0 1 1 160 100 Z" fill="url(#g1)" stroke="#ff4f8a" stroke-width="3"/>
+                  <!-- combinacion area -->
+                  <rect x="45" y="70" width="110" height="60" rx="8" ry="8" fill="#ffdff0" opacity="0.6"/>
+              </svg>
+          </div>
+
+
+          <form id="lockForm" class="lock-form" onsubmit="return false;">
+          <div class="selectors">
+          <select id="day">
+          <!-- 1..31 -->
+          ${Array.from({length:31},(_,i)=>`<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('')}
+          </select>
+          <select id="month">
+          ${Array.from({length:12},(_,i)=>`<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('')}
+          </select>
+          <select id="year">
+          <!-- show two-digit years 20..30 -->
+          ${['23','24','25','26','27','28','29','30'].map(y=>`<option value="${y}">${y}</option>`).join('')}
+          </select>
+          </div>
+
+          <div class="hint">Pista: ¿Cuándo nos hicimos novios?</div>
+          <button id="unlockBtn" class="btn">Desbloquear</button>
+          <p id="msg" class="msg"></p>
+          </form>
+          </div>
+
+        </main>
+
+        <script>
+        // --- valores correctos ---
+        const CORRECT = { day: '30', month: '06', year: '25' };
+
+        (function(){
+       // Populate selects in case template placeholders were left in the HTML
+       const day = document.getElementById('day');
+       const month = document.getElementById('month');
+       const year = document.getElementById('year');
+
+       if (day) 
+        {
+          day.innerHTML = Array.from({length:31}, (_, i) =>
+          `<option value="${String(i+1).padStart(2,'0')}">${String(i+1).padStart(2,'0')}</option>`
+          ).join('');
+        }
+
+      if (month) 
+        {
+          month.innerHTML = Array.from({length:12}, (_, i) =>
+          `<option value="${String(i+1).padStart(2,'0')}">${String(i+1).padStart(2,'0')}</option>`
+          ).join('');
+        }
+
+      if (year) 
+        {
+          year.innerHTML = ['23','24','25','26','27','28','29','30'].map(y =>
+          `<option value="${y}">${y}</option>`
+          ).join('');
+        }
+
+      const btn = document.getElementById('unlockBtn');
+      const msg = document.getElementById('msg');
+
+      if (btn) 
+        {
+          btn.addEventListener('click', function(e){
+          e.preventDefault();
+          const d = day ? day.value : '';
+          const m = month ? month.value : '';
+          const y = year ? year.value : '';
+
+           if (d === CORRECT.day && m === CORRECT.month && y === CORRECT.year) {
+              if (msg) 
+                {
+                  msg.classList.remove('error');
+                  msg.classList.add('success');
+                  // Mostrar enlace solo cuando esté desbloqueado
+                  msg.innerHTML = '¡Desbloqueado! <a id="nextLink" href="love.html" class="next-link">Siguiente</a>';
+                }
+        } else 
+            {
+              if (msg) 
+                {
+                  msg.textContent = 'Fecha incorrecta.';
+                  msg.classList.remove('success');
+                  msg.classList.add('error');
+                }
+            }
+        });
+      }
+      })();
+      </script>
+  </body>
+</html>
