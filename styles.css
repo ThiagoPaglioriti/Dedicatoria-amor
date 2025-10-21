@@ -3,10 +3,10 @@
 --font: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:var(--font);background:linear-gradient(180deg,#ffeef6 0%,#ffdfe9 100%);color:#6b1840}
+body{margin:0;font-family:var(--font);color:#6b1840}
 .center{max-width:420px;margin:30px auto;padding:20px}
 .title{font-size:1.6rem;text-align:center;margin-bottom:12px;color:var(--accent)}
-.lock-card{background:linear-gradient(180deg,#fff4fb, #ffeef8);border-radius:22px;padding:18px;box-shadow:var(--shadow);text-align:center}
+.lock-card{border-radius:22px;padding:18px;box-shadow:var(--shadow);text-align:center}
 .lock-card{position:relative}
 .lock-art{height:170px;display:flex;align-items:center;justify-content:center}
 .lock-form .selectors{display:flex;gap:8px;justify-content:center;margin:8px 0}
@@ -19,12 +19,12 @@ body{margin:0;font-family:var(--font);background:linear-gradient(180deg,#ffeef6 
 	top:92px;
 	transform:translateX(-50%);
 	z-index:2;
-	background:transparent;
+	
 	padding:4px 6px;
 }
 
 /* Asegurar que selects se vean bien encima del fondo */
-.lock-card .selectors select{background:rgba(255,255,255,0.85);border-radius:8px;padding:8px 10px;border:2px solid rgba(255,79,138,0.18);font-weight:600}
+.lock-card .selectors select{border-radius:8px;padding:8px 10px;border:2px solid rgba(255,79,138,0.18);font-weight:600}
 
 @media (max-width:420px){
 	.lock-card .selectors{top:86px}
@@ -32,7 +32,7 @@ body{margin:0;font-family:var(--font);background:linear-gradient(180deg,#ffeef6 
 }
 .lock-form select{padding:8px 10px;border-radius:8px;border:2px solid rgba(255,79,138,0.18);font-weight:600}
 .hint{font-size:0.9rem;color:#a53b6a;margin-top:6px}
-.btn{margin-top:10px;padding:10px 18px;border-radius:12px;background:linear-gradient(180deg,var(--accent),#ff7ab0);color:white;border:none;cursor:pointer}
+.btn{margin-top:10px;padding:10px 18px;border-radius:12px;color:white;border:none;cursor:pointer}
 .msg{color:#a63a6a;margin-top:8px}
 
 
@@ -51,30 +51,13 @@ body{margin:0;font-family:var(--font);background:linear-gradient(180deg,#ffeef6 
 .carousel.drag{cursor:grab}
 .carousel.drag:active{cursor:grabbing}
 
-/* Fondo con corazones estilo grafito (sketched) */
-/* Usamos un SVG en data-uri para múltiple soporte y repetición */
-:root{
-	--hearts-bg: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%23ffd7e6'/><stop offset='1' stop-color='%23ff9fc6'/></linearGradient></defs><g fill='none' stroke='%23ff4f8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M50 70 C50 45 80 45 80 70 C80 95 50 110 50 130 C50 110 20 95 20 70 C20 45 50 45 50 70 Z' fill='none' opacity='0.9' stroke='%23000000' stroke-width='1.5' stroke-opacity='0.25'/><path d='M150 90 C150 65 180 65 180 90 C180 115 150 130 150 150 C150 130 120 115 120 90 C120 65 150 65 150 90 Z' fill='none' opacity='0.95' stroke='%23000000' stroke-width='1.5' stroke-opacity='0.22'/><g transform='translate(60,110) scale(0.6)'><path d='M20 10 C20 -5 40 -5 40 10 C40 25 20 35 20 50 C20 35 0 25 0 10 C0 -5 20 -5 20 10 Z' fill='%23ff9fc6' stroke='%230000' stroke-width='1' stroke-opacity='0.18'/></g><g transform='translate(10,20) scale(0.45)'><path d='M20 10 C20 -5 40 -5 40 10 C40 25 20 35 20 50 C20 35 0 25 0 10 C0 -5 20 -5 20 10 Z' fill='%23ffd7e6' stroke='%230000' stroke-width='1' stroke-opacity='0.14'/></g></g></svg>");
-}
-
-/* Aplicar fondo a la página de dedicatoria */
-/* Aplicar el fondo sketched tanto en la página de dedicatoria como en la principal */
-body.page-love,
-body.page-lock{
-	background-color:var(--bg);
-	background-image:var(--hearts-bg), linear-gradient(180deg,#fff7fb 0%, #ffeef6 60%, #ffdfe9 100%);
-	background-size:200px 200px, cover;
-	background-repeat:repeat, no-repeat;
-	background-attachment:fixed, scroll;
-}
-
-/* Añadimos una ligera textura tipo papel con pseudo-elemento para dar aspecto más orgánico */
+/* Se eliminaron las reglas de fondo (background) por petición; se mantiene
+   la pseudo-capa para textura si se desea activar luego. */
 body.page-love::before,
 body.page-lock::before{
-	content:"";
-	position:fixed; inset:0; pointer-events:none; z-index:0;
-	background-image:linear-gradient(transparent 0%, rgba(0,0,0,0.02) 100%);
-	mix-blend-mode:overlay; opacity:0.9;
+ 	content:"";
+ 	position:fixed; inset:0; pointer-events:none; z-index:0;
+ 	mix-blend-mode:overlay; opacity:0.9;
 }
 
 /* Asegurar que el contenido quede por encima del fondo */
@@ -89,8 +72,6 @@ body.page-lock::before{
 	transform: translateX(-50%) translateY(10px);
 	background: rgba(0,0,0,0.85);
 	color: #fff;
-	padding: 10px 14px;
-	border-radius: 8px;
 	font-size: 1rem;
 	z-index: 1200;
 	opacity: 0;
@@ -114,7 +95,6 @@ body.page-lock::before{
 	display: inline-block;
 	width: 260px;
 	height: 160px;
-	background: #fff7ec; /* interior crema similar a la imagen */
 	border: 4px solid #6d0f2a; /* borde vino oscuro */
 	border-radius: 14px;
 	box-shadow: 0 6px 14px rgba(0,0,0,0.18);
@@ -130,14 +110,7 @@ body.page-lock::before{
 	left: 0; top: 0; right: 0; bottom: 0;
 	pointer-events: none;
 }
-.sobre::before{
-	/* línea diagonal de izquierda-abajo a derecha-arriba */
-	background: linear-gradient(135deg, transparent 42%, rgba(109,15,42,0.08) 42%, rgba(109,15,42,0.08) 43%, transparent 43%);
-}
-.sobre::after{
-	/* línea diagonal opuesta */
-	background: linear-gradient(225deg, transparent 42%, rgba(109,15,42,0.08) 42%, rgba(109,15,42,0.08) 43%, transparent 43%);
-}
+/* Pseudo-elements para decoración del sobre eliminados (backgrounds removidos) */
 
 /* SELLO centrado con forma circular y corazón en su interior. */
 .sello{
@@ -147,7 +120,6 @@ body.page-lock::before{
 	transform: translate(-50%, -50%);
 	width: 64px;
 	height: 64px;
-	background: #6d0f2a; /* color del sello (vino) */
 	border-radius: 50%;
 	cursor: pointer;
 	color: white;
@@ -167,8 +139,8 @@ body.page-lock::before{
 .carta{
 	display: none; /* visible al abrir */
 	position: relative;
-	background-color: #fffaf0;
-	width: 300px;
+	/* background-color removed */
+	width: 600px;
 	height: auto;
 	margin: 12px auto 0 auto;
 	border: 2px solid #c9a87c;
@@ -222,7 +194,6 @@ body.page-lock::before{
 	left: 0;
 	width: 100%;
 	height: 48%;
-	background: linear-gradient(180deg, rgba(109,15,42,0.06), rgba(109,15,42,0.03));
 	border-bottom: 2px solid rgba(109,15,42,0.08);
 	transform-origin: top center;
 	border-top-left-radius: 12px;
@@ -252,13 +223,13 @@ body.page-lock::before{
 /* Decoración tipo carta: titulo, corazones en las esquinas y arte en la esquina inferior derecha */
 .carta{
 	position: relative; /* necesario para posicionar decoraciones */
-	background: #fff7ec;
 	border: 6px solid #f5cfcf;
 	padding: 28px 36px 64px 36px; /* más espacio horizontal */
 	width: 880px; /* mucho más ancha para alargarse a ambos lados */
 	min-height: 480px; /* ajustar altura para mantener proporción */
 	max-width: calc(100% - 48px);
 	margin: 0 auto; /* asegurar centrado */
+	
 }
 
 .carta .letter-title{
@@ -302,11 +273,11 @@ body.page-lock::before{
 	inset: 12px; /* deja margen desde el borde exterior */
 	border-radius: 8px;
 	pointer-events: none;
-	/* usamos background SVG inline para dibujar puntos uniformes con control de tamaño */
-	background-image: radial-gradient(circle, rgba(109,15,42,0.9) 1px, transparent 1px);
-	background-size: 10px 10px;
+	/* usamos SVG inline para dibujar puntos uniformes con control de tamaño */
+	
 	mask-image: linear-gradient(#000 0 0);
 	opacity: 0.12;
+	
 }
 
 /* Para dar efecto de borde punteado en los lados, ocultamos los puntos cerca del interior para dejar una línea punteada visible
@@ -318,4 +289,62 @@ body.page-lock::before{
 	border-radius: 6px;
 	pointer-events: none;
 	border: 2px dashed rgba(230,90,99,0.45);
+}
+
+/* ------------------------------- */
+/* Fondo animado de corazones    */
+/* ------------------------------- */
+html, body { height: 100%; }
+.bg_heart{
+	position: fixed; /* fijo en la pantalla */
+	inset: 0; /* top:0; right:0; bottom:0; left:0 */
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	pointer-events: none; /* no captura clicks */
+	z-index: 0;
+}
+
+/* Degradado violeta: claro -> oscuro, detrás de los corazones */
+.bg_heart{
+	background: linear-gradient(180deg, rgb(104, 0, 165) 0%, rgb(92, 0, 130) 50%, rgb(30, 1, 45) 100%);
+}
+
+.heart{
+	position: absolute;
+	top: -50%;
+	transform: rotate(-45deg);
+	will-change: transform, top, opacity;
+}
+.heart:before{
+	position:absolute;
+	top:-50%;
+	left:0;
+	display:block;
+	content:"";
+	width:100%;
+	height:100%;
+	background:inherit;
+	border-radius:100%;
+}
+.heart:after{
+	position:absolute;
+	top:0;
+	right:-50%;
+	display:block;
+	content:"";
+	width:100%;
+	height:100%;
+	background:inherit;
+	border-radius:100%;
+}
+
+@keyframes love {
+	0%{ top:110%; opacity:1; }
+	100%{ top:-120%; opacity:0; transform: rotate(-45deg) translateY(-20px) scale(1.05); }
+}
+
+/* Fallback small-screen tweak to keep content above bg hearts */
+@media (max-width:420px){
+	.bg_heart{ opacity:0.95 }
 }

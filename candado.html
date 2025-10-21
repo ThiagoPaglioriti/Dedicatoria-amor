@@ -10,6 +10,9 @@
           <h1 class="title">Ingresa la fecha correcta...</h1>
 
           <div class="lock-card">
+            <!--Background (3d)-->
+            <div class="bg_heart">
+            </div>
           <!-- candado simple con SVG -->
           <div class="lock-art">
               <svg viewBox="0 0 200 200" class="heart-lock">
@@ -170,5 +173,57 @@
           msg.addEventListener('click', ()=>{ msg.classList.remove('visible'); clearTimeout(hideTimeout); });
         })();
       </script>
+        <!-- Fondo animado de corazones (vanilla JS, sin jQuery) -->
+        <script>
+          (function(){
+            const container = document.querySelector('.bg_heart');
+            if(!container) return;
+
+            function makeHeart(){
+              const r_num = Math.floor(Math.random() * 40) + 1;
+              const r_size = Math.floor(Math.random() * 65) + 10;
+              const r_left = Math.floor(Math.random() * 100) + 1;
+              const r_bg = Math.floor(Math.random() * 25) + 100;
+              const r_time = Math.floor(Math.random() * 5) + 5;
+
+              const h1 = document.createElement('div');
+              h1.className = 'heart';
+              h1.style.width = r_size + 'px';
+              h1.style.height = r_size + 'px';
+              h1.style.left = r_left + '%';
+              h1.style.background = `rgba(255,${r_bg-25},${r_bg},1)`;
+              h1.style.animation = `love ${r_time}s ease forwards`;
+
+              const h2 = document.createElement('div');
+              h2.className = 'heart';
+              h2.style.width = (r_size-10) + 'px';
+              h2.style.height = (r_size-10) + 'px';
+              // desplazar la segunda un poco hacia la derecha (puede salirse de 100%, está bien)
+              h2.style.left = (r_left + r_num) + '%';
+              h2.style.background = `rgba(255,${r_bg-25},${Math.min(r_bg+25,255)},1)`;
+              h2.style.animation = `love ${r_time+5}s ease forwards`;
+
+              container.appendChild(h1);
+              container.appendChild(h2);
+
+              // Limpieza: eliminar elementos que ya terminaron la animación o son muy grandes
+              requestAnimationFrame(()=>{
+                const hearts = container.querySelectorAll('.heart');
+                hearts.forEach(h => {
+                  const top = parseFloat(getComputedStyle(h).top) || 0;
+                  const width = parseFloat(getComputedStyle(h).width) || 0;
+                  if(top <= -100 || width >= 150){
+                    if(h.parentNode) h.parentNode.removeChild(h);
+                  }
+                });
+              });
+            }
+
+            const loveInterval = setInterval(makeHeart, 500);
+
+            // Opcional: limpiar cuando la página se descarga
+            window.addEventListener('beforeunload', ()=> clearInterval(loveInterval));
+          })();
+        </script>
   </body>
 </html>
